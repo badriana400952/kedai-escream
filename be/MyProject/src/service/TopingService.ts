@@ -28,35 +28,48 @@ class ToppingService{
         }
     }
 
-    async create(req: Request, res:Response) {
-        const {name,price} = req.body
-        const filename = res.locals.filename
-        console.log('filename',filename)
+    async create(req: Request, res: Response) {
+        const { name, price, productId } = req.body;
+        const filename = res.locals.filename;
+    
         try {
-        const topping =  this.TopingRepository.create({
-            name: name,
-            price:price,
-            image:filename
-        })
-        cloudinary.config({
-            cloud_name: process.env.CLOUD_NAME,
-            api_key: process.env.API_KEY,
-            api_secret: process.env.API_SECRET,
-        })
-        const uploadCloudenary = await cloudinary.uploader.upload("./upload/" + filename)
-
-        const responCloude = this.TopingRepository.create({
-            name: topping.name,
-            price: topping.price,
-            image: uploadCloudenary.secure_url
-        })
-        await this.TopingRepository.save(responCloude)
-        res.status(200).json(responCloude)
+            // Pastikan bahwa productId yang diterima dari request adalah nilai yang valid
+            if (!productId) {
+                return res.status(400).json({ error: 'ProductId is required' });
+            }
+    
+            const topping = this.TopingRepository.create({
+                name: name,
+                price: price,
+                image: filename,
+                product: { id: productId } // Tetapkan productId ke objek product
+            });
+    
+            cloudinary.config({
+                cloud_name: process.env.CLOUD_NAME,
+                api_key: process.env.API_KEY,
+                api_secret: process.env.API_SECRET,
+            });
+    
+            const uploadCloudenary = await cloudinary.uploader.upload("./upload/" + filename);
+    
+            const responCloud = this.TopingRepository.create({
+                name: topping.name,
+                price: topping.price,
+                image: uploadCloudenary.secure_url,
+                product: { id: productId } // Tetapkan productId ke objek product
+            });
+    
+            await this.TopingRepository.save(responCloud);
+    
+            res.status(200).json(responCloud);
         } catch (error) {
-            console.log(error)
+            console.log(error);
+            res.status(500).json({ error: "Internal Server Error" });
         }
     }
-
+    
+    
     async patch(req: Request, res:Response) {
         const {id} = req.params
         const {name,price,image} = req.body

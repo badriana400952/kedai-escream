@@ -34,7 +34,7 @@ router.delete('/product/:id', authenticate,ProductController.delete)
 
 router.get('/toping', authenticate,ToppingController.find)
 router.get('/toping/:id', authenticate,ToppingController.findOne)
-router.post('/toping',authenticate ,upload("image"),ToppingController.create)
+router.post('/toping',authenticate, upload("image"), ToppingController.create)
 router.patch('/toping/:id', authenticate,ToppingController.patch)
 router.delete('/toping/:id', authenticate,ToppingController.delete)
 

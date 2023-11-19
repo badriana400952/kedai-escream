@@ -83,15 +83,21 @@ class ProduceService{
         }
     }
     async create(req:Request,res:Response){
-        const {name, price} = req.body
+        const {name, price,userId} = req.body
         const filename = res.locals.filename
         console.log('filename',filename)
 
         try {
+
+            if(!userId) {
+                return res.status(400).json({error: 'User not found'})
+            }
             const product = this.productRepository.create({
                 name: name,
                 price: price,
-                image: filename
+                image: filename,
+                user: {id: userId}
+
             })
             console.log("product",product)
             
@@ -108,6 +114,7 @@ class ProduceService{
                 name: product.name,
                 price: product.price,
                 image: uploadCloudenary.secure_url,
+                user: {id: userId}
             })
 
             const saveProduct = await this.productRepository.save(uploadCloude)
