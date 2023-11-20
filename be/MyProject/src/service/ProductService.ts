@@ -172,5 +172,13 @@ class ProduceService{
             console.log(error)
         }
     }
+    async findNav(req:Request,res:Response){
+        try {
+            const product = await this.productRepository.find()
+            res.status(200).json(product)
+        } catch (error) {
+            console.log(error)
+        }
+    }
 }
 export default new ProduceService

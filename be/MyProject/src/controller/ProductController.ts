@@ -2,6 +2,9 @@ import { Request, Response,  } from "express"
 import ProductService from "../service/ProductService"
 class ProductController {
 
+    findNav(req: Request, res: Response) {
+        ProductService.findNav(req, res)
+    }
     find(req: Request, res: Response) {
         ProductService.find(req, res)
     }
